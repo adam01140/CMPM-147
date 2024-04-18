@@ -1,30 +1,13 @@
-// sketch.js - purpose and description here
-// Author: Your Name
-// Date:
+/* exported setup, draw */
 
-// Here is how you might set up an OOP p5.js project
-// Note that p5.js looks for a file called sketch.js
 
-// Constants - User-servicable parts
-// In a longer project I like to put these in a separate file
-const VALUE1 = 1;
-const VALUE2 = 2;
+let seed = 239;
+let clouds = [];
+let flowers = [];
+let bushes = []; // Array to store bush objects with vertices
 
-// Globals
-let myInstance;
-let canvasContainer;
-var centerHorz, centerVert;
-
-class MyClass {
-    constructor(param1, param2) {
-        this.property1 = param1;
-        this.property2 = param2;
-    }
-
-    myMethod() {
-        // code to run when method is called
-    }
-}
+const skyColor = "#69ade4";
+const grassColor = "#45CA5A";
 
 function resizeScreen() {
   centerHorz = canvasContainer.width() / 2; // Adjusted for drawing logic
@@ -34,46 +17,160 @@ function resizeScreen() {
   // redrawCanvas(); // Redraw everything based on new size
 }
 
-// setup() function is called once when the program starts
-function setup() {
-  // place our canvas, making it fit our container
+// listener for reimagine button
+$("#reimagine").click(function() {
+  seed++;
+});
+
+function setup() {  // place our canvas, making it fit our container
   canvasContainer = $("#canvas-container");
   let canvas = createCanvas(canvasContainer.width(), canvasContainer.height());
   canvas.parent("canvas-container");
-  // resize canvas is the page is resized
-
-  // create an instance of the class
-  myInstance = new MyClass("VALUE1", "VALUE2");
-
   $(window).resize(function() {
     resizeScreen();
   });
   resizeScreen();
+  
+  
+  initializeScene();
 }
 
-// draw() function is called repeatedly, it's the main animation loop
 function draw() {
-  background(220);    
-  // call a method on the instance
-  myInstance.myMethod();
-
-  // Set up rotation for the rectangle
-  push(); // Save the current drawing context
-  translate(centerHorz, centerVert); // Move the origin to the rectangle's center
-  rotate(frameCount / 100.0); // Rotate by frameCount to animate the rotation
-  fill(234, 31, 81);
+  background(100);
   noStroke();
-  rect(-125, -125, 250, 250); // Draw the rectangle centered on the new origin
-  pop(); // Restore the original drawing context
 
-  // The text is not affected by the translate and rotate
-  fill(255);
-  textStyle(BOLD);
-  textSize(140);
-  text("p5*", centerHorz - 105, centerVert + 40);
+  // Draw sky
+  fill(skyColor);
+  rect(0, 0, width, height / 2);
+
+  // Draw grass
+  fill(grassColor);
+  rect(0, height / 2, width, height / 2);
+
+  // Draw clouds
+  fill(255); // White clouds
+  clouds.forEach(cloud => {
+    drawCloud(cloud.x, cloud.y, cloud.size);
+    cloud.x += 0.5;
+    if (cloud.x > width) {
+      cloud.x = -50;
+    }
+  });
+
+  // Draw flowers
+  flowers.forEach(flower => {
+    drawFlower(flower.x, flower.y, flower.color);
+  });
+
+  // Draw bushes
+  bushes.forEach(bush => {
+    drawBush(bush);
+  });
 }
 
-// mousePressed() function is called once after every time a mouse button is pressed
+
+
+
+
+
+
+
+function initializeScene() {
+  randomSeed(seed);
+  clouds = [];
+  flowers = [];
+  bushes = [];
+
+  // Initialize clouds
+  for (let i = 0; i < 5; i++) {
+    clouds.push({
+      x: random(width),
+      y: random(height / 4),
+      size: random(20, 60)
+    });
+  }
+
+  // Initialize flowers
+  for (let i = 0; i < 20; i++) {
+    flowers.push({
+      x: random(width),
+      y: random(height / 2, height),
+      color: color(random(255), random(255), random(255))
+    });
+  }
+
+  // Initialize bushes with smaller size
+  for (let i = 0; i < 10; i++) {
+    let vertices = [];
+    const numPoints = floor(random(5, 8));
+    const bushSize = random(20, 35); // Reduced size range
+    for (let j = 0; j < numPoints; j++) {
+      const angle = map(j, 0, numPoints, 0, TWO_PI);
+      const r = random(bushSize * 0.5, bushSize);
+      const px = r * cos(angle);
+      const py = r * sin(angle);
+      vertices.push({ x: px, y: py });
+    }
+    bushes.push({
+      x: random(width),
+      y: random(height / 2, height),
+      size: bushSize,
+      vertices: vertices
+    });
+  }
+}
+
+function reinitializeScene() {
+  seed++;
+  initializeScene();
+}
+
+
+function drawCloud(x, y, size) {
+  ellipse(x, y, size, size / 2);
+  ellipse(x - size / 3, y + size / 6, size / 2, size / 4);
+  ellipse(x + size / 3, y - size / 6, size / 2, size / 4);
+}
+
+function drawFlower(x, y, color) {
+  fill(color);
+  ellipse(x, y, 10, 10);  // Flower center
+  fill(255);  // White petals
+  ellipse(x - 5, y, 5, 5);  // Left petal
+  ellipse(x + 5, y, 5, 5);  // Right petal
+  ellipse(x, y - 5, 5, 5);  // Top petal
+  ellipse(x, y + 5, 5, 5);  // Bottom petal
+}
+
+function drawBush(bush) {
+  push(); // Use push and pop to isolate transformations
+  translate(bush.x, bush.y);
+  fill(34, 139, 34); // Set fill color before beginShape
+  beginShape();
+  bush.vertices.forEach(v => {
+    vertex(v.x, v.y);
+  });
+  endShape(CLOSE);
+  pop();
+}
+
 function mousePressed() {
-    // code to run when mouse is pressed
+  // Check if click is in the sky area
+  if (mouseY < height / 2) {
+    let newCloud = {
+      x: mouseX,
+      y: mouseY,
+      size: random(20, 60)
+    };
+    clouds.push(newCloud);
+  }
+  // Check if click is in the grass area
+  else if (mouseY >= height / 2) {
+    let newFlower = {
+      x: mouseX,
+      y: mouseY,
+      color: color(random(255), random(255), random(255))
+    };
+    flowers.push(newFlower);
+  }
 }

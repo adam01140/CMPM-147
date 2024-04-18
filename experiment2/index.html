@@ -2,7 +2,7 @@
 <html>
 <head>
 	<!-- This title is used for tabs and bookmarks -->
-	<title>Experiment X - Subject/Topic</title>
+	<title>Experiment 2 - Living Impression</title>
 
 	<!-- Use UTF character set, a good idea with any webpage -->
 	<meta charset="UTF-8" />
@@ -25,37 +25,54 @@
 	<!-- Use me for a JavaScript OOP Project -->
 	<script type="text/javascript" src="./js/project.js" DEFER></script>
 	<!-- Use me for a p5.js project -->
-	<script type="text/javascript" src="./js/sketch.js" DEFER></script>
+	
 </head>
 <body>
 	<!-- Style this page by changing the CSS in ../css/site.css or css/experiment.css -->
 	<main id="content">
 		<section>
 
-			<h1>Experiment X - Subject/Topic</h1>
+			<h1>Experiment 2 - A Procedurally Generated Living Impression</h1>
 
 			<div class="minor-section">
 				<div id="canvas-container">
 					<!-- canvas will be added here -->
 				</div>
                 <div class="fullscreen-box">
+                    <button id="reimagine" onclick="reinitializeScene" >Reimagine</button>
+					<script type="text/javascript" src="./js/sketch.js" DEFER></script>
                     <button id="fullscreen">Fullscreen</button>
                 </div>
 			</div>
 
-			<div class="minor-section">
-				<h2>Description</h2>
-				<p>What are you trying to acomplish with this experiment?</p>
-			</div>
+            <div class="two-column">
 
-			<div class="minor-section">
-				<h2>Technical</h2>
-				<p>Describe in detail what you did technically and how it works?</p>
-			</div>
+                <div class="minor-section">
+                    <h2>Description</h2>
+                    <p>This project offers a generative, living impression of this inspiring image:</p>
+                    <div class="image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1536163493384-0436bd4ee1df?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80">
+                    </div>
+                </div>
+
+                <div class="minor-section">
+                    <h2>Technical</h2>
+                    <p>Relation to inspring image:</p>
+                    <ul>
+                        <li>Color: The sky, grass, clouds, and flower colors were sampled from the inspiring image using my eyes, I eyeballed it using a hex color picker.</li>
+                        <li>Primitives: The clouds and flowers are rendered with elipses and circles.</li>
+                        <li>Polygons: The bushes are randomly positioned and generated using randomly shaped polygons that change based on the seed</li>
+                        <li>Composition: Different random seed values lead to differently shaped bushes and differently positioned clouds/flowers</li>
+                        <li>Life: The position of clouds is animated over time as if to simulate them drifting off with the wind. The user can also spawn more flowers/clouds by clicking around the landscape</li>
+                    </ul>
+                    
+                </div>
+
+            </div>
 
 			<div class="minor-section">
 				<h2>Reflection</h2>
-				<p>Each person that worked on the code should reflect on the process, the difficulties, and the successes of the experiment.</p>
+				<p>As I went through the experimentation process for Experiment 2, I learned a lot about how to generate polygons and randomly create them based on a seed</p>
 			</div>
 
 		</section>
