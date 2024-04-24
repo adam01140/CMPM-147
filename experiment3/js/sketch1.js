@@ -14,8 +14,6 @@ const lookup = [
   [18, 24], // Code 5 (0101): Wall Corner Top Right
   [18, 24], // Code 6 (0110): Wall Corner Top Left
   [18, 24], // Code 15 (1111): Background dungeon tile (surrounded by walls)
-  
-  
 ];
 
 function gridCheck(grid, i, j, target) {

@@ -6,16 +6,15 @@
 
 // Lookup table for tile offsets based on context
 const lookup = [
-  [0, 16], // Code 0 (0000): Background dirt tile (no walls nearby)
-  [15, 24], // Code 1 (0001): Wall tile (wall to the north)
-  [16, 24], // Code 2 (0010): Wall tile (wall to the south)
+  [0, 4], // Code 0 (0000): Background dirt tile (no walls nearby)
+  [16, 5], // Code 1 (0001): Wall tile (wall to the north)
+  [3, 3], // Code 2 (0010): Wall tile (wall to the south)
   [17, 24], // Code 3 (0011): Wall tile (walls to the north and south, use vertical piece)
   [18, 24], // Code 4 (0100): Wall tile (wall to the east)
-  [18, 24], // Code 5 (0101): Wall Corner Top Right
-  [18, 24], // Code 6 (0110): Wall Corner Top Left
+  [16, 5], // Code 5 (0101): Wall Corner Top Right
+  [16, 5], // Code 6 (0110): Wall Corner Top Left
   [18, 24], // Code 15 (1111): Background dungeon tile (surrounded by walls)
-  
-  
+  [10, 16], //flower
 ];
 
 function gridCheck(grid, i, j, target) {
@@ -60,13 +59,21 @@ function drawContext(grid, i, j, target, ti, tj) {
 
 function generateGrid(numCols, numRows) {
   let grid = [];
-  for (let i = 0; i < numRows; i++) {
-      let row = [];
-      for (let j = 0; j < numCols; j++) {
-          row.push("_");
-      }
-      grid.push(row);
-  }
+    for (let i = 0; i < numRows; i++) {
+        let row = [];
+        for (let j = 0; j < numCols; j++) {
+            // Randomly decide to place a flower tile
+            if (random() < 0.1) {  // 10% chance to place a flower
+                row.push('f');  // Assuming 'f' is the code for flower tiles
+            } else {
+                row.push("_");  // Otherwise, place a background dirt tile
+            }
+        }
+        grid.push(row);
+    }
+
+    
+  
 
   let centers = [];
   for (let i = 0; i < 5; i++) { // Assuming you want 5 rooms
@@ -126,12 +133,12 @@ function connectRooms(centers) {
       // Connect horizontally first, then vertically
       for (let x = Math.min(start[0], end[0]); x <= Math.max(start[0], end[0]); x++) {
           if (grid[start[1]][x] !== 'i') {
-              grid[start[1]][x] = 'b'; // Use wall tiles for hallways
+              //grid[start[1]][x] = 'b'; // Use wall tiles for hallways
           }
       }
       for (let y = Math.min(start[1], end[1]); y <= Math.max(start[1], end[1]); y++) {
           if (grid[y][start[0]] !== 'i') {
-              grid[y][start[0]] = 'b'; // Use wall tiles for hallways
+              //grid[y][start[0]] = 'b'; // Use wall tiles for hallways
           }
       }
   }
@@ -159,13 +166,18 @@ function drawGrid(grid) {
     for (let j = 0; j < grid[i].length; j++) {
       if (grid[i][j] == '_') {
         // Draw background dirt
-        placeTile(i, j, 4, 21);
+        placeTile(i, j, 0 + (floor(random(4))), 0);
       } else if (grid[i][j] == 'b') {
         // Draw wall tiles
-        drawContext(grid, i, j, 'b', 0, 0); // Wall tiles base (x, y) indices not used, adjusted within drawContext
+        drawContext(grid, i, j, 'b', 0, 0);
+        
       } else if (grid[i][j] == 'i') {
         // Draw inside dungeon tiles
-        placeTile(i, j, Math.floor(Math.random() * 3)+ 0, 16);
+        placeTile(i, j, Math.floor(Math.random() * 3)+ 0, 13);
+      }
+      else if (grid[i][j] == 'f') {
+        // Draw inside dungeon tiles
+        placeTile(i, j, 17, Math.floor(Math.random() * 2)+ 1);
       }
     }
   }
